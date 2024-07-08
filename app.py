@@ -98,12 +98,16 @@ def deleteTask():
         print('Invalid Input !')
 
 def changeTask():
-    id_value = int(input("\nEnter the task id:\n"))
-    new_title = input('Enter the new title\n')
+    try:
+        id_value = int(input("\nEnter the task id:\n"))
+    except Exception:
+        print("Invalid Input! Type a number.")
+        return
 
+    new_title = input('Enter the new title\n')
     try:
         target = session.query(Task).filter_by(id=id_value).first()
-        target.title = enum_key_from_value(new_title) # type: ignore
+        target.title = new_title # type: ignore
         session.commit()
         print("Title Updated !")
 
