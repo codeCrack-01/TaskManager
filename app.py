@@ -1,4 +1,4 @@
-import re
+import os
 from sqlalchemy import create_engine, Column, Integer, String, Enum
 from sqlalchemy.orm import sessionmaker, declarative_base
 import enum
@@ -41,6 +41,14 @@ def enum_key_from_value(value):
         if member.value == value:
             return key
     return None  # Return None if the value isn't found in the enum
+
+def clear_screen():
+    if os.name == 'posix':  # for Linux and macOS
+        _ = os.system('clear')
+    elif os.name == 'nt':  # for Windows
+        _ = os.system('cls')
+
+    print("Terminal screen cleared!")
 
 def clearAll():
     session.query(Task).delete()
@@ -121,7 +129,10 @@ def QuitApp():
         print("\nExiting the App !")
         global flag
         flag = True
+    elif (lastCheck == 'n'):
+        return
     else:
+        print('Invalid Token!')
         return
 
 def userGuide():
@@ -143,10 +154,12 @@ Following are the commands with description:
 [5]  .deleteTask: "Use this command to delete a specific task from list."
 
 [6]  .clearAll: "Use this command to clear all tasks from your list."
+          
+[7]  .clean: "Use this command to clean up the terminal."
 
-[7]  .help: "Use this command to display this guide."
+[8]  .help: "Use this command to display this guide."
 
-[8]  .quit: "Use this command to exit the task management system."
+[9]  .quit: "Use this command to exit the task management system."
 
 _____________________________________________________________________________
 ! IMPORTANT !
@@ -177,6 +190,8 @@ def checkResponse(response):
             userGuide()
         case '.quit':
             QuitApp()
+        case '.clean':
+            clear_screen()
         case _:
             print("Invalid Syntax! Type '.help' for user guidance.")
 
@@ -186,7 +201,7 @@ print("\nWelcome to the task Manager!")
 
 while flag is False:
     print("\nUse the following Commands:")
-    print("[.addTask  .showTask  .updateTask  .changeTask  .deleteTask  .clearAll  .help  .quit]")
+    print("[.addTask  .showTask  .updateTask  .changeTask  .deleteTask  .clearAll  .clean  .help  .quit]")
 
     user_response = input().lower()
     checkResponse(response=user_response)
